@@ -1,0 +1,75 @@
+@misc{wiki:idea,
+	title = {International {Data} {Encryption} {Algorithm}},
+	copyright = {Creative Commons Attribution-ShareAlike License},
+	url = {https://en.wikipedia.org/w/index.php?title=International_Data_Encryption_Algorithm&oldid=704684534},
+	abstract = {In cryptography, the International Data Encryption Algorithm (IDEA), originally called Improved Proposed Encryption Standard (IPES), is a symmetric-key block cipher designed by James Massey of ETH Zurich and Xuejia Lai and was first described in 1991. The algorithm was intended as a replacement for the Data Encryption Standard (DES). IDEA is a minor revision of an earlier cipher, Proposed Encryption Standard (PES).
+The cipher was designed under a research contract with the Hasler Foundation, which became part of Ascom-Tech AG. The cipher was patented in a number of countries but was freely available for non-commercial use. The name "IDEA" is also a trademark. The last patents expired in 2012, and IDEA is now patent-free and thus completely free for all uses.
+IDEA was used in Pretty Good Privacy (PGP) v2.0, and was incorporated after the original cipher used in v1.0, BassOmatic, was found to be insecure. IDEA is an optional algorithm in the OpenPGP standard.},
+	language = {en},
+	urldate = {2016-05-26},
+	journal = {Wikipedia, the free encyclopedia},
+	month = feb,
+	year = {2016},
+	note = {Page Version ID: 704684534},
+	file = {Snapshot:C\:\\Users\\ddmll\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\g479gg1a.default\\zotero\\storage\\R5KIV3HF\\index.html:text/html}
+}
+ 
+@misc{wiki:symmetric-key,
+	title = {Symmetric-key algorithm},
+	copyright = {Creative Commons Attribution-ShareAlike License},
+	url = {https://en.wikipedia.org/w/index.php?title=Symmetric-key_algorithm&oldid=721229454},
+	abstract = {Symmetric-key algorithms are algorithms for cryptography that use the same cryptographic keys for both encryption of plaintext and decryption of ciphertext. The keys may be identical or there may be a simple transformation to go between the two keys. The keys, in practice, represent a shared secret between two or more parties that can be used to maintain a private information link. This requirement that both parties have access to the secret key is one of the main drawbacks of symmetric key encryption, in comparison to public-key encryption (also known as asymmetric key encryption).},
+	language = {en},
+	urldate = {2016-05-26},
+	journal = {Wikipedia, the free encyclopedia},
+	month = may,
+	year = {2016},
+	note = {Page Version ID: 721229454},
+	file = {Snapshot:C\:\\Users\\ddmll\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\g479gg1a.default\\zotero\\storage\\PSSR8CKD\\index.html:text/html}
+}
+
+@misc{wiki:block-cipher,
+	title = {Block cipher},
+	copyright = {Creative Commons Attribution-ShareAlike License},
+	url = {https://en.wikipedia.org/w/index.php?title=Block_cipher&oldid=718649413},
+	abstract = {In cryptography, a block cipher is a deterministic algorithm operating on fixed-length groups of bits, called blocks, with an unvarying transformation that is specified by a symmetric key. Block ciphers are important elementary components in the design of many cryptographic protocols, and are widely used to implement encryption of bulk data.
+The modern design of block ciphers is based on the concept of an iterated product cipher. Product ciphers were suggested and analyzed by Claude Shannon in his seminal 1949 publication Communication Theory of Secrecy Systems as a means to effectively improve security by combining simple operations such as substitutions and permutations. Iterated product ciphers carry out encryption in multiple rounds, each of which uses a different subkey derived from the original key. One widespread implementation of such ciphers is called a Feistel network, named after Horst Feistel, and notably implemented in the DES cipher. Many other realizations of block ciphers, such as the AES, are classified as substitution-permutation networks.
+The publication of the DES cipher by the U.S. National Bureau of Standards (now National Institute of Standards and Technology, NIST) in 1977 was fundamental in the public understanding of modern block cipher design. In the same way, it influenced the academic development of cryptanalytic attacks. Both differential and linear cryptanalysis arose out of studies on the DES design. Today, there is a palette of attack techniques against which a block cipher must be secure, in addition to being robust against brute force attacks.
+Even a secure block cipher is suitable only for the encryption of a single block under a fixed key. A multitude of modes of operation have been designed to allow their repeated use in a secure way, commonly to achieve the security goals of confidentiality and authenticity. However, block ciphers may also be used as building blocks in other cryptographic protocols, such as universal hash functions and pseudo-random number generators.},
+	language = {en},
+	urldate = {2016-05-27},
+	journal = {Wikipedia, the free encyclopedia},
+	month = may,
+	year = {2016},
+	note = {Page Version ID: 718649413},
+	file = {Snapshot:C\:\\Users\\ddmll\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\g479gg1a.default\\zotero\\storage\\BKZ6MEII\\index.html:text/html}
+}
+
+@misc{wiki:mode-operation,
+	title = {Block cipher mode of operation},
+	copyright = {Creative Commons Attribution-ShareAlike License},
+	url = {https://en.wikipedia.org/w/index.php?title=Block_cipher_mode_of_operation&oldid=721473432},
+	abstract = {In cryptography, a mode of operation is an algorithm that uses a block cipher to encrypt messages of arbitrary length in a way that provides confidentiality or authenticity. A block cipher by itself is only suitable for the secure cryptographic transformation (encryption or decryption) of one fixed-length group of bits called a block. A mode of operation describes how to repeatedly apply a cipher's single-block operation to securely transform amounts of data larger than a block.
+Most modes require a unique binary sequence, often called an initialization vector (IV), for each encryption operation. The IV has to be non-repeating and, for some modes, random as well. The initialization vector is used to ensure distinct ciphertexts are produced even when the same plaintext is encrypted multiple times independently with the same key. Block ciphers have one or more block size(s), but during transformation the block size is always fixed. Block cipher modes operate on whole blocks and require that the last part of the data be padded to a full block if it is smaller than the current block size. There are, however, modes that do not require padding because they effectively use a block cipher as a stream cipher; such ciphers are capable of encrypting arbitrarily long sequences of bytes or bits.
+Historically, encryption modes have been studied extensively in regard to their error propagation properties under various scenarios of data modification. Later development regarded integrity protection as an entirely separate cryptographic goal. Some modern modes of operation combine confidentiality and authenticity in an efficient way, and are known as authenticated encryption modes.},
+	language = {en},
+	urldate = {2016-05-27},
+	journal = {Wikipedia, the free encyclopedia},
+	month = may,
+	year = {2016},
+	note = {Page Version ID: 721473432},
+	file = {Snapshot:C\:\\Users\\ddmll\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\g479gg1a.default\\zotero\\storage\\XVWE2JGG\\index.html:text/html}
+}
+ 
+@book{menezes_handbook_1996,
+	address = {Boca Raton},
+	edition = {Edición: New.},
+	title = {Handbook of {Applied} {Cryptography}},
+	isbn = {978-0-8493-8523-0},
+	abstract = {Cryptography, in particular public-key cryptography, has emerged in the last 20 years as an important discipline that is not only the subject of an enormous amount of research, but provides the foundation for                             information security in many applications. Standards are emerging to meet the demands for cryptographic protection in most areas of data communications. Public-key cryptographic techniques are now in widespread use, especially                             in the financial services industry, in the public sector, and by individuals for their personal privacy, such as in electronic mail. This Handbook will serve as a valuable reference for the novice as well as for the expert who                             needs a wider scope of coverage within the area of cryptography. It is a necessary and timely guide for professionals who practice the art of cryptography. The Handbook of Applied Cryptography provides a                             treatment that is multifunctional:It serves as an introduction to the more practical aspects of both conventional and public-key cryptographyIt is a valuable source                             of the latest techniques and algorithms for the serious practitionerIt provides an integrated treatment of the field, while still presenting each major topic as a self-contained                             unitIt provides a mathematical treatment to accompany practical discussionsIt contains enough abstraction to be a valuable reference for theoreticians while                             containing enough detail to actually allow implementation of the algorithms discussedNow in its third printing, this is the definitive cryptography reference that the novice as well as experienced developers,                             designers, researchers, engineers, computer scientists, and mathematicians alike will use.},
+	language = {Inglés},
+	publisher = {CRC Press},
+	author = {Menezes, Alfred J. and Menezes, A. J. and Menezes},
+	month = oct,
+	year = {1996}
+}
