@@ -261,20 +261,82 @@ $I_{j+1} \leftarrow 2^r \cdot I_j + t_j\ mod\ 2^n.$ (Shift output $t_j$ into rig
 	\caption{OFB mode of operation. \citep{menezes_handbook_1996}}
 \end{figure}
 
-\section{IDEA}
+\section{IDEA cipher}
 
-"The cipher named IDEA (International Data Encryption Algorithm) encrypts 64-bit plaintext to 64-bit ciphertext blocks, using a 128-bit input key $K$. Based in part on a novel generalization of the Feistel structure, it consists of 8 computationally identical rounds followed by an output transformation. Round $r$ uses six 16-bit subkeys $K_{i}^{(r)},\ 1 \le i\le 6$, to transform a 64-bit input $X$ into an output of four 16-bit blocks, which are input to the next round. The round 8 output enters the output transformation, employing four additional subkeys $K_{i}^{(9)},\ 1 \le i \le 4$ to produce the final ciphertext $Y = (Y_1, Y_2, Y_3, Y_4)$.
+"The first incarnation of the IDEA cipher, by Xuejia Lai and James Massey, surfaced in 1990. It was called PES (Proposed Encryption Standard). The next year, after Biham and Shamir’s demonstrated differential cryptanalysis, the authors strengthened their cipher against the attack and called the new algorithm IPES (Improved Proposed Encryption Standard). IPES changed its name to IDEA (International Data Encryption Algorithm) in 1992." \citep{schneier_applied_1996}
 
-All subkeys are derived from $K$. A dominant design concept in IDEA is mixing operations from three different algebraic groups of $2^n$ elements. The corresponding group operations on sub-blocks $a$ and $b$ of bitlength $n = 16$ are bitwise XOR: $a \oplus b$; addition $mod\ 2^n$: $(a+b)\ AND\ 0xFFFF$, denoted $a \boxplus b$; and (modified) multiplication $mod\ 2^n+1$, with $0 \in Z_{2^n}$ associated with $2^n \in Z_{2^{n+1}}$:
-$a \odot b$." \citep{menezes_handbook_1996}
+"IDEA cipher encrypts 64-bit plaintext to 64-bit ciphertext blocks, using a 128-bit input key $K$. Based in part on a novel generalization of the Feistel structure, it consists of 8 computationally identical rounds followed by an output transformation. Round $r$ uses six 16-bit subkeys $K_{i}^{(r)},\ 1 \le i\le 6$, to transform a 64-bit input $X$ into an output of four 16-bit blocks, which are input to the next round. The round 8 output enters the output transformation, employing four additional subkeys $K_{i}^{(9)},\ 1 \le i \le 4$ to produce the final ciphertext $Y = (Y_1, Y_2, Y_3, Y_4)$. "The same algorithm is used for both encryption and decryption." \citep{schneier_applied_1996}
+
+All subkeys are derived from $K$. A dominant design concept in IDEA is mixing operations from three different algebraic groups of $2^n$ elements. The corresponding group operations on sub-blocks $a$ and $b$ of bitlength $n = 16$ are:" \citep{menezes_handbook_1996} 
+\begin{itemize}[noitemsep]
+	\item $a \oplus b$: bitwise XOR. 
+	\item $a \boxplus b$: addition $mod\ 2^n$: $(a+b)\ AND\ 0xFFFF$.
+	\item $a \odot b$: (modified) multiplication $mod\ 2^n+1$, with $0 \in Z_{2^n}$ associated with $2^n \in Z_{2^{n+1}}$.
+\end{itemize}
 
 \begin{figure}[!ht]
 	\centering
 	\label{fig:idea}
-	\includegraphics[width=\textwidth]{idea.png}
+	\includegraphics[width=0.92\textwidth]{idea.png}
 	\caption{IDEA computation path. \citep{menezes_handbook_1996}}
 \end{figure}
 
+"The 64-bit data block is divided into four 16-bit sub-blocks: $X_1$, $X_2$, $X_3$ and $X_4$. These four sub-blocks become the input to the first round of the algorithm. There are eight rounds total. In each round the four sub-blocks are XORed, added, and multiplied with one another and with six 16-bit subkeys. Between rounds, the second and third sub-blocks are swapped. 
+
+Finally, the four sub-blocks are combined with four subkeys in an output transformation.
+
+In each round, the sequence of events is as follows:
+
+\begin{enumerate}[noitemsep]
+	\item Multiply $X_1$ and the first subkey.
+	\item Add $X_2$ and the second subkey.
+	\item Add $X_3$ and the third subkey.
+	\item Multiply $X_4$ and the fourth subkey.
+	\item XOR the results of steps (1) and (3).
+	\item XOR the results of steps (2) and (4). 
+	\item Multiply the results of step (5) with the fifth subkey. 
+	\item Add the results of steps (6) and (7). 
+	\item Multiply the results of step (8) with the sixth subkey. 
+	\item Add the results of steps (7) and (9). 
+	\item XOR the results of steps (1) and (9). 
+	\item XOR the results of steps (3) and (9). 
+	\item XOR the results of steps (2) and (10). 
+	\item	XOR the results of steps (4) and (10). 
+\end{enumerate}
+
+"The output of the round is the four sub-blocks that are the results of steps  (11), (12), (13), and (14). Swap the two inner blocks (except for the last round) and that is the input to the next round. 
+
+After the eighth round, there is a final output transformation:
+
+\begin{enumerate}[noitemsep]
+	\item Multiply $X_1$ and the first subkey.
+	\item Add $X_2$ and the second subkey.
+	\item Add $X_3$ and the third subkey.
+	\item Multiply $X_4$ and the fourth subkey.
+\end{enumerate}
+
+Finally, the four sub-blocks are reattached to produce the ciphertext.
+
+Creating the subkeys is also easy. The algorithm uses 52 of them (six for each of the eight rounds and four more for the output transformation). First, the 128-bit key is divided into eight 16-bit subkeys. These are the first eight subkeys for the algorithm (the six for the first round, and the first two for the second round). Then, the key is rotated 25 bits to the left and again divided into eight subkeys. The first four are used in round 2; the last four are used in round 3. The key is rotated another 25 bits to the left for the next eight subkeys, and so on until the end of the algorithm." \citep{schneier_applied_1996}
+
+"The very simple key schedule makes IDEA subject to a class of weak keys; some keys containing a large number of 0 bits produce weak encryption.[9] These are of little concern in practice, being sufficiently rare that they are unnecessary to avoid explicitly when generating keys randomly." \citep{wiki:idea}
+
+"Decryption is exactly the same, except that the subkeys are reversed and slightly different. The decryption subkeys are either the additive or multiplicative inverses of the encryption subkeys. (For the purposes of IDEA, the all-zero sub-block is considered to represent $2^16 = –1$ for multiplication 
+modulo $2^{16} + 1$; thus the multiplicative inverse of 0 is 0). Calculating these takes some doing, but you only have to do it once for each decryption key." \citep{schneier_applied_1996}
+
+\begin{figure}[!ht]
+	\centering
+	\label{fig:idea-enc}
+	\includegraphics[width=\textwidth]{idea-enc.png}
+	\caption{IDEA encryption sample. \citep{menezes_handbook_1996}}
+\end{figure}
+
+\begin{figure}[!ht]
+	\centering
+	\label{fig:idea-dec}
+	\includegraphics[width=\textwidth]{idea-dec.png}
+	\caption{IDEA decryption sample. \citep{menezes_handbook_1996}}
+\end{figure}
 
 % -------------------------------------------------------------
 % Bibliography
