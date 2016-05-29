@@ -321,7 +321,7 @@ Creating the subkeys is also easy. The algorithm uses 52 of them (six for each o
 
 "The very simple key schedule makes IDEA subject to a class of weak keys; some keys containing a large number of 0 bits produce weak encryption.[9] These are of little concern in practice, being sufficiently rare that they are unnecessary to avoid explicitly when generating keys randomly." \citep{wiki:idea}
 
-"Decryption is exactly the same, except that the subkeys are reversed and slightly different. The decryption subkeys are either the additive or multiplicative inverses of the encryption subkeys. (For the purposes of IDEA, the all-zero sub-block is considered to represent $2^16 = –1$ for multiplication 
+"Decryption is exactly the same, except that the subkeys are reversed and slightly different. The decryption subkeys are either the additive or multiplicative inverses of the encryption subkeys. (For the purposes of IDEA, the all-zero sub-block is considered to represent $2^{16} = -1$ for multiplication 
 modulo $2^{16} + 1$; thus the multiplicative inverse of 0 is 0). Calculating these takes some doing, but you only have to do it once for each decryption key." \citep{schneier_applied_1996}
 
 \begin{figure}[!ht]

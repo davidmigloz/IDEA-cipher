@@ -18,7 +18,7 @@ public abstract class Cipher {
     /**
      * Set the key from a block of bytes.
      */
-    public abstract void setKey(byte[] key);
+    protected abstract void setKey(byte[] key);
 
     /**
      * Set the key from a string.
