@@ -40,4 +40,33 @@ public class IdeaCipherTest {
         assertEquals("Different size", eSubkey.length, subkey.length);
         assertArrayEquals("Different subkeys", eSubkey, subkey);
     }
+
+    @Test
+    public void mul() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        int[] x = {0, 0, 1, 100,   10000, 65535, 65536, 65537, 65538};
+        int[] y = {0, 1, 0, 100,   10000, 1,     1,     1,     1};
+        int[] m = {0, 0, 0, 10000, 56075, 65535, 0,     0,     1};
+
+        Method method = IdeaCipher.class.getDeclaredMethod("mul", int.class, int.class);
+        method.setAccessible(true);
+
+        for (int i = 0; i < x.length; i++) {
+            int res = (int) method.invoke(null, x[i], y[i]);
+            assertEquals("Incorrect multiplication", m[i], res);
+        }
+    }
+
+    @Test
+    public void mulInv() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        int[] num = {0, 1, 100,   1000,  10000, 65536, 65537, 65538};
+        int[] inv = {0, 1, 17695, 34538, 42776, 0,     0,     1};
+
+        Method method = IdeaCipher.class.getDeclaredMethod("mulInv", int.class);
+        method.setAccessible(true);
+
+        for (int i = 0; i < num.length; i++) {
+            int res = (int) method.invoke(null, num[i]);
+            assertEquals("Incorrect inverse", inv[i], res);
+        }
+    }
 }

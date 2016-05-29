@@ -100,13 +100,18 @@ public class IdeaCipher extends BlockCipher {
         if (m != 0) {
             return (int) (m % 0x10001) & 0xFFFF;
         } else {
-            return (1 - x - y) & 0xFFFF;
+            if(x != 0 || y != 0){
+                return (1 - x - y) & 0xFFFF;
+            }
+            return 0;
         }
     }
 
     /**
      * Multiplicative inverse in the multiplicative group (mod 2^16+1 = mod 0x10001).
      * It uses Extended Euclidean algorithm to compute the inverse.
+     * For the purposes of IDEA, the all-zero sub-block is considered to represent 2^16 = −1
+     * for multiplication modulo 216 + 1; thus the multiplicative inverse of 0 is 0.
      * Range [0, 0xFFFF].
      */
     private static int mulInv(int x) {
@@ -114,20 +119,24 @@ public class IdeaCipher extends BlockCipher {
             // 0 and 1 are their own inverses
             return x;
         }
-        int y = 0x10001;
-        int t0 = 1;
-        int t1 = 0;
-        while (true) {
-            t1 += y / x * t0;
-            y %= x;
-            if (y == 1) {
-                return 0x10001 - t1;
+        try {
+            int y = 0x10001;
+            int t0 = 1;
+            int t1 = 0;
+            while (true) {
+                t1 += y / x * t0;
+                y %= x;
+                if (y == 1) {
+                    return ( 1 - t1 ) & 0xffff;
+                }
+                t0 += x / y * t1;
+                x %= y;
+                if (x == 1) {
+                    return t0;
+                }
             }
-            t0 += x / y * t1;
-            x %= y;
-            if (x == 1) {
-                return t0;
-            }
+        } catch (ArithmeticException e) {
+            return 0;
         }
     }
 }
