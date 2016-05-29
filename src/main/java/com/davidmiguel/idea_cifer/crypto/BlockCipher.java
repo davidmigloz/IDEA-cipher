@@ -21,7 +21,9 @@ public abstract class BlockCipher extends Cipher {
      */
     public abstract void encrypt(byte[] clearText, int clearOff, byte[] cipherText, int cipherOff);
 
-    /* Decrypt a block of bytes. */
+    /*
+     * Decrypt a block of bytes.
+     */
     public abstract void decrypt(byte[] cipherText, int cipherOff, byte[] clearText, int clearOff);
 
     /**

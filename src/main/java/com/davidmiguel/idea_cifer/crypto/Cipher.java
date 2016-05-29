@@ -30,7 +30,7 @@ public abstract class Cipher {
     /**
      * Turn a string into a key of the right length.
      */
-    public byte[] makeKey(String keyStr) {
+    private byte[] makeKey(String keyStr) {
         byte[] key = new byte[keySize];
         int i, j;
         for (j = 0; j < key.length; ++j) {
