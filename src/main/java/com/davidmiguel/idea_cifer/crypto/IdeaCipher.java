@@ -28,7 +28,7 @@ public class IdeaCipher extends BlockCipher {
         if (encrypt) {
             subKey = tempSubKey;
         } else {
-            //subKey = invertSubKey(tempSubKey);
+            subKey = invertSubkey(tempSubKey);
         }
     }
 
@@ -65,14 +65,39 @@ public class IdeaCipher extends BlockCipher {
     }
 
     /**
-     * Reverse and invert the sub-keys.
+     * Reverse and invert the subkeys to get the decryption subkeys.
+     * They are either the additive or multiplicative inverses of the encryption subkeys in reverse order.
      *
-     * @param subkey
-     * @return
+     * @param subkey subkeys
+     * @return inverted subkey
      */
-    private int[] invertSubKey(int[] subkey) {
-
-        return null;
+    private static int[] invertSubkey(int[] subkey) {
+        int[] invSubkey = new int[subkey.length];
+        int p = 0;
+        int i = ROUNDS * 6;
+        // For the final output transformation (round 9)
+        invSubkey[i + 0] = mulInv(subkey[p++]);     // 48 <- 0
+        invSubkey[i + 1] = addInv(subkey[p++]);     // 49 <- 1
+        invSubkey[i + 2] = addInv(subkey[p++]);     // 50 <- 2
+        invSubkey[i + 3] = mulInv(subkey[p++]);     // 51 <- 3
+        // From round 8 to 2
+        for (int r = ROUNDS - 1; r > 0; r--) {
+            i = r * 6;
+            invSubkey[i + 4] = subkey[p++];         // 46 <- 4 ...
+            invSubkey[i + 5] = subkey[p++];         // 47 <- 5 ...
+            invSubkey[i + 0] = mulInv(subkey[p++]); // 42 <- 6 ...
+            invSubkey[i + 2] = addInv(subkey[p++]); // 44 <- 7 ...
+            invSubkey[i + 1] = addInv(subkey[p++]); // 43 <- 8 ...
+            invSubkey[i + 3] = mulInv(subkey[p++]); // 45 <- 9 ...
+        }
+        // Round 1
+        invSubkey[4] = subkey[p++];                 // 4 <- 46
+        invSubkey[5] = subkey[p++];                 // 5 <- 47
+        invSubkey[0] = mulInv(subkey[p++]);         // 0 <- 48
+        invSubkey[1] = addInv(subkey[p++]);         // 1 <- 49
+        invSubkey[2] = addInv(subkey[p++]);         // 2 <- 50
+        invSubkey[3] = mulInv(subkey[p++]);         // 3 <- 51
+        return invSubkey;
     }
 
     /**
