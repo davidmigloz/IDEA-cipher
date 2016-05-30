@@ -55,17 +55,15 @@ public abstract class BlockCipher {
      *
      * @param data   64-bit block of data
      * @param offset start point
-     * @return 64-bit block of cipherdata
      */
-    public abstract byte[] crypt(byte[] data, int offset);
+    public abstract void crypt(byte[] data, int offset);
 
     /**
      * Encrypts / decrypts a 64-bit block of data.
      *
      * @param data 64-bit block of data
-     * @return 64-bit block of cipherdata
      */
-    public byte[] crypt(byte[] data) {
-        return crypt(data, 0);
+    public void crypt(byte[] data) {
+        crypt(data, 0);
     }
 }

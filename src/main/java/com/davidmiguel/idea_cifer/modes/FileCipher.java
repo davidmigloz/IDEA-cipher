@@ -14,6 +14,8 @@ import java.util.Arrays;
 
 /**
  * Encrypts or decrypts a files with different modes of operation.
+ *
+ * Based on http://www.source-code.biz/idea/java
  */
 public class FileCipher {
 
@@ -128,11 +130,11 @@ public class FileCipher {
     private static void writeDataLength(FileChannel outChannel, long dataLength, OperationMode opMod)
             throws IOException {
         // Package the dataLength into an 8-byte block
-        byte[] a = packDataLength(dataLength);
+        byte[] block = packDataLength(dataLength);
         // Encrypt block
-        opMod.crypt(a);
+        opMod.crypt(block);
         // Write block at the end of the file
-        ByteBuffer buf = ByteBuffer.wrap(a);
+        ByteBuffer buf = ByteBuffer.wrap(block);
         int bytesWritten = outChannel.write(buf);
         if (bytesWritten != BLOCK_SIZE) {
             throw new IOException("Error while writing data length suffix.");
@@ -151,11 +153,11 @@ public class FileCipher {
         if (bytesRead != BLOCK_SIZE) {
             throw new IOException("Unable to read data length suffix.");
         }
-        byte[] a = buf.array();
+        byte[] block = buf.array();
         // Decrypt block
-        opMod.crypt(a);
+        opMod.crypt(block);
         // Unpackage data length
-        return unpackDataLength(a);
+        return unpackDataLength(block);
     }
 
     /**

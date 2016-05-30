@@ -12,16 +12,17 @@ public class IdeaCipherTest {
     @Test
     public void crypt() throws Exception {
         byte[] data = {1, 2, 3, 4, 5, 6, 7, 8};
+        byte[] input = data.clone();
         String key = "asdfasdfasdfasdf";
         // Encrypt
         BlockCipher e = new IdeaCipher(key, true);
-        byte[] cipherData = e.crypt(data);
+        e.crypt(input);
         // Decrypt
         BlockCipher d = new IdeaCipher(key, false);
-        byte[] clearData = d.crypt(cipherData);
+        d.crypt(input);
 
-        assertEquals("Different size", data.length, clearData.length);
-        assertArrayEquals("Different data", data, clearData);
+        assertEquals("Different size", data.length, input.length);
+        assertArrayEquals("Different data", data, input);
     }
 
     @Test

@@ -4,6 +4,8 @@ import java.util.Arrays;
 
 /**
  * Implementation of IDEA symmetric-key block cipher.
+ *
+ * Based on http://www.source-code.biz/idea/java
  */
 public class IdeaCipher extends BlockCipher {
 
@@ -31,7 +33,7 @@ public class IdeaCipher extends BlockCipher {
 
     @SuppressWarnings({"SuspiciousNameCombination", "PointlessArithmeticExpression"})
     @Override
-    public byte[] crypt(byte[] data, int offset) {
+    public void crypt(byte[] data, int offset) {
         // Divide the 64-bit data block into four 16-bit sub-blocks (input of 1st round)
         int x1 = concat2Bytes(data[offset + 0], data[offset + 1]);
         int x2 = concat2Bytes(data[offset + 2], data[offset + 3]);
@@ -61,16 +63,14 @@ public class IdeaCipher extends BlockCipher {
         int r2 = add(x2, subKey[k++]);              // Add X3 and the third subkey
         int r3 = mul(x4, subKey[k]);                // Multiply X4 and the fourth subkey
         // Reattach the four sub-blocks
-        byte[] cipherdata = data.clone();
-        cipherdata[offset + 0] = (byte) (r0 >> 8);
-        cipherdata[offset + 1] = (byte) r0;
-        cipherdata[offset + 2] = (byte) (r1 >> 8);
-        cipherdata[offset + 3] = (byte) r1;
-        cipherdata[offset + 4] = (byte) (r2 >> 8);
-        cipherdata[offset + 5] = (byte) r2;
-        cipherdata[offset + 6] = (byte) (r3 >> 8);
-        cipherdata[offset + 7] = (byte) r3;
-        return cipherdata;
+        data[offset + 0] = (byte) (r0 >> 8);
+        data[offset + 1] = (byte) r0;
+        data[offset + 2] = (byte) (r1 >> 8);
+        data[offset + 3] = (byte) r1;
+        data[offset + 4] = (byte) (r2 >> 8);
+        data[offset + 5] = (byte) r2;
+        data[offset + 6] = (byte) (r3 >> 8);
+        data[offset + 7] = (byte) r3;
     }
 
     /**
