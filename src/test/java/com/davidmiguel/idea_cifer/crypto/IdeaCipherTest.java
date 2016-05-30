@@ -4,13 +4,12 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.awt.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 
 import static org.junit.Assert.*;
 
+@SuppressWarnings("PrimitiveArrayArgumentToVarargsMethod")
 public class IdeaCipherTest {
 
     @Before
