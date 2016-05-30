@@ -1,7 +1,5 @@
 package com.davidmiguel.idea_cifer.crypto;
 
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
 import java.lang.reflect.InvocationTargetException;
@@ -19,11 +17,11 @@ public class BlockCipherTest {
         method.setAccessible(true);
 
         byte[] res = new byte[0];
-        for (int i = 0; i < keys.length; i++) {
+        for (String key : keys) {
             try {
-                res = (byte[]) method.invoke(c, keys[i]);
-            }catch (Exception e) {
-                System.out.println("Invalid key: " + keys[i]);
+                res = (byte[]) method.invoke(c, key);
+            } catch (Exception e) {
+                System.out.println("Invalid key: " + key);
             }
             assertEquals("Wrong size", 16, res.length);
         }

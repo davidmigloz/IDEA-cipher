@@ -1,7 +1,5 @@
 package com.davidmiguel.idea_cifer.crypto;
 
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
 import java.lang.reflect.InvocationTargetException;
@@ -11,17 +9,6 @@ import static org.junit.Assert.*;
 
 @SuppressWarnings("PrimitiveArrayArgumentToVarargsMethod")
 public class IdeaCipherTest {
-
-    @Before
-    public void setUp() throws Exception {
-
-    }
-
-    @After
-    public void tearDown() throws Exception {
-
-    }
-
     @Test
     public void crypt() throws Exception {
         byte[] data = {1, 2, 3, 4, 5, 6, 7, 8};

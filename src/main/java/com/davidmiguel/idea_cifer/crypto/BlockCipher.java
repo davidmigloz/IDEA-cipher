@@ -29,23 +29,23 @@ public abstract class BlockCipher {
     /**
      * Set the key from a string.
      *
-     * @param keyStr string key
+     * @param charKey string key
      */
-    protected void setKey(String keyStr) {
-        setKey(makeKey(keyStr));
+    protected void setKey(String charKey) {
+        setKey(makeKey(charKey));
     }
 
     /**
      * Turn a string into a key of the right length.
      */
-    private byte[] makeKey(String keyStr) {
+    private byte[] makeKey(String charKey) {
         byte[] key = new byte[keySize];
         int i, j;
         for (j = 0; j < key.length; ++j) {
             key[j] = 0;
         }
-        for (i = 0, j = 0; i < keyStr.length(); i++, j = (j + 1) % key.length) {
-            key[j] ^= (byte) keyStr.charAt(i);
+        for (i = 0, j = 0; i < charKey.length(); i++, j = (j + 1) % key.length) {
+            key[j] ^= (byte) charKey.charAt(i);
         }
         return key;
     }

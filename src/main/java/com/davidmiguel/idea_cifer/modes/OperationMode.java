@@ -3,25 +3,25 @@ package com.davidmiguel.idea_cifer.modes;
 import com.davidmiguel.idea_cifer.crypto.IdeaCipher;
 
 /**
- * Created by davidmigloz on 28/05/2016.
+ * Mode of operation.
  */
 public abstract class OperationMode {
 
-    /** Idea cipher */
-    IdeaCipher idea;
-    /** Encrypt / Decrypt */
-    boolean encrypt;
-    /** Data of the previous ciphertext block */
-    byte[] prev;
-    /** Data of the new ciphertext block */
-    byte[] newPrev;
+    public enum Mode {
+        ECB, CBC, CFB, OFB
+    }
 
-    protected OperationMode(IdeaCipher idea, boolean encrypt, int blockSize) {
+    protected IdeaCipher idea;
+    protected boolean encrypt;
+
+    public OperationMode(IdeaCipher idea, boolean encrypt) {
         this.idea = idea;
         this.encrypt = encrypt;
-        prev = new byte[blockSize];
-        newPrev = new byte[blockSize];
     }
 
     protected abstract void crypt(byte[] data, int pos);
+
+    protected void crypt(byte[] data){
+        crypt(data, 0);
+    }
 }

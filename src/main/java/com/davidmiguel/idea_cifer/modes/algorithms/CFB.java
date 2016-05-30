@@ -4,12 +4,12 @@ import com.davidmiguel.idea_cifer.crypto.IdeaCipher;
 import com.davidmiguel.idea_cifer.modes.OperationMode;
 
 /**
- * Created by davidmigloz on 28/05/2016.
+ * CFB mode of operation.
  */
 public class CFB extends OperationMode {
 
-    protected CFB(IdeaCipher idea, boolean encrypt, int blockSize) {
-        super(idea, encrypt, blockSize);
+    public CFB(IdeaCipher idea, boolean encrypt) {
+        super(idea, encrypt);
     }
 
     @Override

@@ -13,10 +13,10 @@ public class IdeaCipher extends BlockCipher {
     private int[] subKey;
 
 
-    public IdeaCipher(String keyStr, boolean encrypt) {
+    public IdeaCipher(String charKey, boolean encrypt) {
         super(16, 8);
         this.encrypt = encrypt;
-        setKey(keyStr);
+        setKey(charKey);
     }
 
     @Override
@@ -32,9 +32,6 @@ public class IdeaCipher extends BlockCipher {
     @SuppressWarnings({"SuspiciousNameCombination", "PointlessArithmeticExpression"})
     @Override
     public byte[] crypt(byte[] data, int offset) {
-        if (data.length != 8) {
-            throw new IllegalArgumentException();
-        }
         // Divide the 64-bit data block into four 16-bit sub-blocks (input of 1st round)
         int x1 = concat2Bytes(data[offset + 0], data[offset + 1]);
         int x2 = concat2Bytes(data[offset + 2], data[offset + 3]);
@@ -64,7 +61,7 @@ public class IdeaCipher extends BlockCipher {
         int r2 = add(x2, subKey[k++]);              // Add X3 and the third subkey
         int r3 = mul(x4, subKey[k]);                // Multiply X4 and the fourth subkey
         // Reattach the four sub-blocks
-        byte[] cipherdata = new byte[data.length];
+        byte[] cipherdata = data.clone();
         cipherdata[offset + 0] = (byte) (r0 >> 8);
         cipherdata[offset + 1] = (byte) r0;
         cipherdata[offset + 2] = (byte) (r1 >> 8);

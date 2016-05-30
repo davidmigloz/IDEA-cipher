@@ -4,16 +4,16 @@ import com.davidmiguel.idea_cifer.crypto.IdeaCipher;
 import com.davidmiguel.idea_cifer.modes.OperationMode;
 
 /**
- * Created by davidmigloz on 28/05/2016.
+ * ECB mode of operation.
  */
 public class ECB extends OperationMode {
 
-    protected ECB(IdeaCipher idea, boolean encrypt, int blockSize) {
-        super(idea, encrypt, blockSize);
+    public ECB(IdeaCipher idea, boolean encrypt) {
+        super(idea, encrypt);
     }
 
     @Override
     protected void crypt(byte[] data, int pos) {
-
+        data = idea.crypt(data, pos);
     }
 }
