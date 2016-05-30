@@ -42,6 +42,35 @@ public class IdeaCipherTest {
     }
 
     @Test
+    public void add() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        int[] x = {0, 0, 100,   65536, 65536};
+        int[] y = {0, 1, 100,   0,     1};
+        int[] s = {0, 1, 200,   0,     1};
+
+        Method method = IdeaCipher.class.getDeclaredMethod("add", int.class, int.class);
+        method.setAccessible(true);
+
+        for (int i = 0; i < x.length; i++) {
+            int res = (int) method.invoke(null, x[i], y[i]);
+            assertEquals("Incorrect sum", s[i], res);
+        }
+    }
+
+    @Test
+    public void addInv() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        int[] num = {0, 1,     100,   65535, 65536, 65537 };
+        int[] inv = {0, 65535, 65436, 1,     0,     65535};
+
+        Method method = IdeaCipher.class.getDeclaredMethod("addInv", int.class);
+        method.setAccessible(true);
+
+        for (int i = 0; i < num.length; i++) {
+            int res = (int) method.invoke(null, num[i]);
+            assertEquals("Incorrect inverse", inv[i], res);
+        }
+    }
+
+    @Test
     public void mul() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         int[] x = {0, 0, 1, 100,   10000, 65535, 65536, 65537, 65538};
         int[] y = {0, 1, 0, 100,   10000, 1,     1,     1,     1};
