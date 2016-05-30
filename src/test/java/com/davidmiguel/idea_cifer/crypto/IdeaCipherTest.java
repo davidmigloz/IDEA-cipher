@@ -4,12 +4,15 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.awt.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 
 import static org.junit.Assert.*;
 
 public class IdeaCipherTest {
+
     @Before
     public void setUp() throws Exception {
 
@@ -18,6 +21,21 @@ public class IdeaCipherTest {
     @After
     public void tearDown() throws Exception {
 
+    }
+
+    @Test
+    public void crypt() throws Exception {
+        byte[] data = {1, 2, 3, 4, 5, 6, 7, 8};
+        String key = "asdfasdfasdfasdf";
+        // Encrypt
+        BlockCipher e = new IdeaCipher(key, true);
+        byte[] cipherData = e.crypt(data);
+        // Decrypt
+        BlockCipher d = new IdeaCipher(key, false);
+        byte[] clearData = d.crypt(cipherData);
+
+        assertEquals("Different size", data.length, clearData.length);
+        assertArrayEquals("Different data", data, clearData);
     }
 
     @Test

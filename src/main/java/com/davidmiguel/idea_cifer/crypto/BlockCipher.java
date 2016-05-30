@@ -3,13 +3,18 @@ package com.davidmiguel.idea_cifer.crypto;
 /**
  * Created by davidmigloz on 28/05/2016.
  */
-public abstract class BlockCipher extends Cipher {
+public abstract class BlockCipher {
 
+    private int keySize;
     private int blockSize;
 
     public BlockCipher(int keySize, int blockSize) {
-        super(keySize);
+        this.keySize = keySize;
         this.blockSize = blockSize;
+    }
+
+    public int getKeySize() {
+        return keySize;
     }
 
     public int getBlockSize() {
@@ -17,26 +22,50 @@ public abstract class BlockCipher extends Cipher {
     }
 
     /**
-     * Encrypt a block of bytes.
+     * Set the key from a block of bytes.
      */
-    //public abstract void encrypt(byte[] clearText, int clearOff, byte[] cipherText, int cipherOff);
-
-    /*
-     * Decrypt a block of bytes.
-     */
-    //public abstract void decrypt(byte[] cipherText, int cipherOff, byte[] clearText, int clearOff);
+    protected abstract void setKey(byte[] key);
 
     /**
-     * Encrypt a block of bytes.
+     * Set the key from a string.
+     *
+     * @param keyStr string key
      */
-    public void encrypt(byte[] clearText, byte[] cipherText) {
-        //encrypt(clearText, 0, cipherText, 0);
+    protected void setKey(String keyStr) {
+        setKey(makeKey(keyStr));
     }
 
     /**
-     * Decrypt a block of bytes.
+     * Turn a string into a key of the right length.
      */
-    public void decrypt(byte[] cipherText, byte[] clearText) {
-        //decrypt(cipherText, 0, clearText, 0);
+    private byte[] makeKey(String keyStr) {
+        byte[] key = new byte[keySize];
+        int i, j;
+        for (j = 0; j < key.length; ++j) {
+            key[j] = 0;
+        }
+        for (i = 0, j = 0; i < keyStr.length(); i++, j = (j + 1) % key.length) {
+            key[j] ^= (byte) keyStr.charAt(i);
+        }
+        return key;
+    }
+
+    /**
+     * Encrypts / decrypts a 64-bit block of data.
+     *
+     * @param data   64-bit block of data
+     * @param offset start point
+     * @return 64-bit block of cipherdata
+     */
+    public abstract byte[] crypt(byte[] data, int offset);
+
+    /**
+     * Encrypts / decrypts a 64-bit block of data.
+     *
+     * @param data 64-bit block of data
+     * @return 64-bit block of cipherdata
+     */
+    public byte[] crypt(byte[] data) {
+        return crypt(data, 0);
     }
 }
