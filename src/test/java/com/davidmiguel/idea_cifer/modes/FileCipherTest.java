@@ -4,6 +4,8 @@ import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,6 +13,9 @@ import java.io.IOException;
 import static org.junit.Assert.*;
 
 public class FileCipherTest {
+
+    private static final Logger logger = LoggerFactory.getLogger(FileCipherTest.class);
+
     @Before
     public void setUp() throws Exception {
 
@@ -30,9 +35,10 @@ public class FileCipherTest {
         String newFileName    = "text.dec";
 
         FileCipher.cryptFile(resourcesPath + fileName, resourcesPath + cryptogramName,
-                key, true, OperationMode.Mode.ECB);
+                key, true, OperationMode.Mode.CBC);
+        logger.debug(">>----------------");
         FileCipher.cryptFile(resourcesPath + cryptogramName, resourcesPath + newFileName,
-                key, false, OperationMode.Mode.ECB);
+                key, false, OperationMode.Mode.CBC);
 
         File file1 = new File(resourcesPath + fileName);
         File file2 = new File(resourcesPath + newFileName);

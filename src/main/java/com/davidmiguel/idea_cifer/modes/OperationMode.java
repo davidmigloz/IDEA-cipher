@@ -24,4 +24,8 @@ public abstract class OperationMode {
     protected void crypt(byte[] data){
         crypt(data, 0);
     }
+
+    public boolean isEncrypt() {
+        return encrypt;
+    }
 }

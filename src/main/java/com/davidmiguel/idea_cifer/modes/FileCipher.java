@@ -4,6 +4,9 @@ import com.davidmiguel.idea_cifer.crypto.IdeaCipher;
 import com.davidmiguel.idea_cifer.modes.algorithms.CBC;
 import com.davidmiguel.idea_cifer.modes.algorithms.CFB;
 import com.davidmiguel.idea_cifer.modes.algorithms.ECB;
+import com.davidmiguel.idea_cifer.modes.algorithms.OFB;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -19,6 +22,7 @@ import java.util.Arrays;
  */
 public class FileCipher {
 
+    private static final Logger logger = LoggerFactory.getLogger(FileCipher.class);
     private static final int BLOCK_SIZE = 8;
 
     public static void cryptFile(String inputFileName, String outputFileName, String charKey,
@@ -30,23 +34,26 @@ public class FileCipher {
                      StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE)) {
 
             IdeaCipher idea = new IdeaCipher(charKey, encrypt);
+            logger.debug(encrypt ? "Encrypting..." : "Decrypting...");
+
             OperationMode opMod;
             switch (mode) {
                 case ECB:
                     opMod = new ECB(idea, encrypt);
                     break;
                 case CBC:
-                    opMod = new CBC(idea, encrypt);
+                    opMod = new CBC(idea, encrypt, charKey);
                     break;
                 case CFB:
                     opMod = new CFB(idea, encrypt);
                     break;
                 case OFB:
-                    opMod = new CFB(idea, encrypt);
+                    opMod = new OFB(idea, encrypt, charKey);
                     break;
                 default:
                     throw new IllegalArgumentException("Incorrect mode of operation.");
             }
+            logger.debug("Mode: " + mode.toString());
 
             // Check and compute sizes of data
             long inFileSize = inChannel.size(); // Input file size (bytes)
@@ -54,6 +61,7 @@ public class FileCipher {
             if (encrypt) {
                 inDataLen = inFileSize; // Input data size = input file size
                 outDataLen = (inDataLen + BLOCK_SIZE - 1) / BLOCK_SIZE * BLOCK_SIZE; // Closest upper multiple of blockSize
+                logger.debug("Sizes: " + inDataLen + "b input, " + (outDataLen + 8) + "b output");
             } else {
                 if (inFileSize == 0) {
                     throw new IOException("Input file is empty.");
@@ -62,6 +70,7 @@ public class FileCipher {
                 }
                 inDataLen = inFileSize - BLOCK_SIZE; // Last block is the data size (encrypted)
                 outDataLen = inDataLen;
+                logger.debug("Sizes: " + (inDataLen + 8) + "b input, <=" + outDataLen  + "b output");
             }
 
             // Encrypt / decrypt data
@@ -81,6 +90,7 @@ public class FileCipher {
                 // Truncate output file to the leght of the data
                 if (dataSize != outDataLen) {
                     outChannel.truncate(dataSize);
+                    logger.debug("Truncate " + outDataLen + "b to " + dataSize + "b");
                 }
             }
             outChannel.close();
@@ -108,8 +118,11 @@ public class FileCipher {
             int chunkLen = (bytesRead + BLOCK_SIZE - 1) / BLOCK_SIZE * BLOCK_SIZE; // Closest upper multiple of blockSize
             Arrays.fill(buf.array(), bytesRead, chunkLen, (byte) 0); // Fill the free space of the chunk with 0
             for (int pos = 0; pos < chunkLen; pos += BLOCK_SIZE) {
+                if(opMod.isEncrypt()) logger.debug(Arrays.toString(Arrays.copyOfRange(buf.array(), pos,  pos + BLOCK_SIZE)));
                 opMod.crypt(buf.array(), pos); // Encrypt chunk with chosen operation mode
+                if(!opMod.isEncrypt()) logger.debug(Arrays.toString(Arrays.copyOfRange(buf.array(), pos,  pos + BLOCK_SIZE)));
             }
+            logger.debug("s----------------");
             // Write buffer to output file
             int bytesToWrite = (int) Math.min(outDataLen - filePos, chunkLen);
             buf.limit(bytesToWrite);
@@ -132,6 +145,7 @@ public class FileCipher {
         // Package the dataLength into an 8-byte block
         byte[] block = packDataLength(dataLength);
         // Encrypt block
+        logger.debug(Arrays.toString(Arrays.copyOfRange(block, 0,  0 + BLOCK_SIZE)));
         opMod.crypt(block);
         // Write block at the end of the file
         ByteBuffer buf = ByteBuffer.wrap(block);
@@ -156,6 +170,7 @@ public class FileCipher {
         byte[] block = buf.array();
         // Decrypt block
         opMod.crypt(block);
+        logger.debug(Arrays.toString(Arrays.copyOfRange(block, 0,  0 + BLOCK_SIZE)));
         // Unpackage data length
         return unpackDataLength(block);
     }

@@ -1,7 +1,5 @@
 package com.davidmiguel.idea_cifer.crypto;
 
-import java.util.Arrays;
-
 /**
  * Implementation of IDEA symmetric-key block cipher.
  *
@@ -9,14 +7,15 @@ import java.util.Arrays;
  */
 public class IdeaCipher extends BlockCipher {
 
+    private static final int KEY_SIZE = 16;
+    private static final int BLOCK_SIZE = 8;
     private static final int ROUNDS = 8;
 
     private boolean encrypt;
     private int[] subKey;
 
-
     public IdeaCipher(String charKey, boolean encrypt) {
-        super(16, 8);
+        super(KEY_SIZE, BLOCK_SIZE);
         this.encrypt = encrypt;
         setKey(charKey);
     }
