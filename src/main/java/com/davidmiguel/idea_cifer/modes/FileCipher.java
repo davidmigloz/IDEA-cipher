@@ -33,26 +33,25 @@ public class FileCipher {
              FileChannel outChannel = FileChannel.open(Paths.get(outputFileName), StandardOpenOption.CREATE,
                      StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE)) {
 
-            IdeaCipher idea = new IdeaCipher(charKey, encrypt);
-            logger.debug(encrypt ? "Encrypting..." : "Decrypting...");
-
+            // Select mode of operation
             OperationMode opMod;
             switch (mode) {
                 case ECB:
-                    opMod = new ECB(idea, encrypt);
+                    opMod = new ECB(encrypt, charKey);
                     break;
                 case CBC:
-                    opMod = new CBC(idea, encrypt, charKey);
+                    opMod = new CBC(encrypt, charKey);
                     break;
                 case CFB:
-                    opMod = new CFB(idea, encrypt);
+                    opMod = new CFB(encrypt, charKey);
                     break;
                 case OFB:
-                    opMod = new OFB(idea, encrypt, charKey);
+                    opMod = new OFB(charKey);
                     break;
                 default:
                     throw new IllegalArgumentException("Incorrect mode of operation.");
             }
+            logger.debug(encrypt ? "Encrypting..." : "Decrypting...");
             logger.debug("Mode: " + mode.toString());
 
             // Check and compute sizes of data

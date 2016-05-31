@@ -34,15 +34,17 @@ public class FileCipherTest {
         String cryptogramName = "text.cif";
         String newFileName    = "text.dec";
 
-        FileCipher.cryptFile(resourcesPath + fileName, resourcesPath + cryptogramName,
-                key, true, OperationMode.Mode.CBC);
-        logger.debug(">>----------------");
-        FileCipher.cryptFile(resourcesPath + cryptogramName, resourcesPath + newFileName,
-                key, false, OperationMode.Mode.CBC);
+        for (OperationMode.Mode mode : OperationMode.Mode.values()) {
+            FileCipher.cryptFile(resourcesPath + fileName, resourcesPath + cryptogramName,
+                    key, true, mode);
+            logger.debug(">>----------------");
+            FileCipher.cryptFile(resourcesPath + cryptogramName, resourcesPath + newFileName,
+                    key, false, mode);
 
-        File file1 = new File(resourcesPath + fileName);
-        File file2 = new File(resourcesPath + newFileName);
-        assertTrue("Different files", FileUtils.contentEquals(file1, file2));
+            File file1 = new File(resourcesPath + fileName);
+            File file2 = new File(resourcesPath + newFileName);
+            assertTrue("Different files", FileUtils.contentEquals(file1, file2));
+        }
     }
 
 }

@@ -8,8 +8,8 @@ import com.davidmiguel.idea_cifer.modes.OperationMode;
  */
 public class CFB extends OperationMode {
 
-    public CFB(IdeaCipher idea, boolean encrypt) {
-        super(idea, encrypt);
+    public CFB(boolean encrypt, String key) {
+        super(new IdeaCipher(key, encrypt), encrypt);
     }
 
     @Override

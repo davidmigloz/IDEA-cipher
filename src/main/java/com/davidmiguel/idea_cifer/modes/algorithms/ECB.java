@@ -10,8 +10,8 @@ import com.davidmiguel.idea_cifer.modes.OperationMode;
  */
 public class ECB extends OperationMode {
 
-    public ECB(IdeaCipher idea, boolean encrypt) {
-        super(idea, encrypt);
+    public ECB(boolean encrypt, String key) {
+        super(new IdeaCipher(key, encrypt), encrypt);
     }
 
     @Override

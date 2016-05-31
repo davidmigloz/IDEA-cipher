@@ -16,8 +16,8 @@ public class CBC extends OperationMode {
     private byte[] prev;
     private byte[] newPrev;
 
-    public CBC(IdeaCipher idea, boolean encrypt, String key) {
-        super(idea, encrypt);
+    public CBC(boolean encrypt, String key) {
+        super(new IdeaCipher(key, encrypt), encrypt);
         blockSize = idea.getBlockSize();
         prev = CrytoUtils.makeKey(key, blockSize); // Get initial vector (IV) from user key
         newPrev = new byte[blockSize];
