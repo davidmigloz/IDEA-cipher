@@ -1,6 +1,5 @@
 package com.davidmiguel.idea_cifer.modes;
 
-import com.davidmiguel.idea_cifer.crypto.IdeaCipher;
 import com.davidmiguel.idea_cifer.modes.algorithms.CBC;
 import com.davidmiguel.idea_cifer.modes.algorithms.CFB;
 import com.davidmiguel.idea_cifer.modes.algorithms.ECB;
@@ -117,9 +116,9 @@ public class FileCipher {
             int chunkLen = (bytesRead + BLOCK_SIZE - 1) / BLOCK_SIZE * BLOCK_SIZE; // Closest upper multiple of blockSize
             Arrays.fill(buf.array(), bytesRead, chunkLen, (byte) 0); // Fill the free space of the chunk with 0
             for (int pos = 0; pos < chunkLen; pos += BLOCK_SIZE) {
-                if(opMod.isEncrypt()) logger.debug(Arrays.toString(Arrays.copyOfRange(buf.array(), pos,  pos + BLOCK_SIZE)));
+                if(opMod.isEncrypt()) logger.debug("e:" + Arrays.toString(Arrays.copyOfRange(buf.array(), pos,  pos + BLOCK_SIZE)));
                 opMod.crypt(buf.array(), pos); // Encrypt chunk with chosen operation mode
-                if(!opMod.isEncrypt()) logger.debug(Arrays.toString(Arrays.copyOfRange(buf.array(), pos,  pos + BLOCK_SIZE)));
+                if(!opMod.isEncrypt()) logger.debug("d:" + Arrays.toString(Arrays.copyOfRange(buf.array(), pos,  pos + BLOCK_SIZE)));
             }
             logger.debug("s----------------");
             // Write buffer to output file

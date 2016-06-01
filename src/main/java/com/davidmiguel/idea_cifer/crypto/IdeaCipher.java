@@ -34,10 +34,10 @@ public class IdeaCipher extends BlockCipher {
     @Override
     public void crypt(byte[] data, int offset) {
         // Divide the 64-bit data block into four 16-bit sub-blocks (input of 1st round)
-        int x1 = concat2Bytes(data[offset + 0], data[offset + 1]);
-        int x2 = concat2Bytes(data[offset + 2], data[offset + 3]);
-        int x3 = concat2Bytes(data[offset + 4], data[offset + 5]);
-        int x4 = concat2Bytes(data[offset + 6], data[offset + 7]);
+        int x1 = CrytoUtils.concat2Bytes(data[offset + 0], data[offset + 1]);
+        int x2 = CrytoUtils.concat2Bytes(data[offset + 2], data[offset + 3]);
+        int x3 = CrytoUtils.concat2Bytes(data[offset + 4], data[offset + 5]);
+        int x4 = CrytoUtils.concat2Bytes(data[offset + 6], data[offset + 7]);
         // Each round
         int k = 0; // Subkey index
         for (int round = 0; round < ROUNDS; round++) {
@@ -87,7 +87,7 @@ public class IdeaCipher extends BlockCipher {
         // The 128-bit userKey is divided into eight 16-bit subkeys
         int b1, b2;
         for (int i = 0; i < userKey.length / 2; i++) {
-            key[i] = concat2Bytes(userKey[2 * i], userKey[2 * i + 1]);
+            key[i] = CrytoUtils.concat2Bytes(userKey[2 * i], userKey[2 * i + 1]);
         }
 
         // The key is rotated 25 bits to the left and again divided into eight subkeys.
@@ -202,14 +202,5 @@ public class IdeaCipher extends BlockCipher {
         } catch (ArithmeticException e) {
             return 0;
         }
-    }
-
-    /**
-     * Concatenate two bytes into one 16-bit block.
-     */
-    private static int concat2Bytes(int b1, int b2) {
-        b1 = (b1 & 0xFF) << 8;  // xxxxxxxx00000000
-        b2 = b2 & 0xFF;         // 00000000xxxxxxxx
-        return (b1 | b2);       // xxxxxxxxxxxxxxxx
     }
 }

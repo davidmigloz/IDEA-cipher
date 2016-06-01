@@ -28,4 +28,28 @@ public class CrytoUtils {
             a[pos + p] ^= b[p];
         }
     }
+
+    /**
+     * Concatenate two bytes into one 16-bit block.
+     */
+    public static int concat2Bytes(int b1, int b2) {
+        b1 = (b1 & 0xFF) << 8;  // xxxxxxxx00000000
+        b2 = b2 & 0xFF;         // 00000000xxxxxxxx
+        return (b1 | b2);       // xxxxxxxxxxxxxxxx
+    }
+
+    /**
+     * Concatenate two bytes arrays into one.
+     */
+    public static byte[] concat2Bytes(byte[] b1, byte[] b2) {
+        byte[] out = new byte[b1.length + b2.length];
+        int i = 0;
+        for (int j = 0 ; j < b1.length ; j++) {
+            out[i++] = b1[j];
+        }
+        for (int j = 0 ; j < b2.length ; j++) {
+            out[i++] = b2[j];
+        }
+        return out;
+    }
 }

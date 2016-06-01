@@ -7,7 +7,7 @@ import com.davidmiguel.idea_cifer.modes.OperationMode;
 /**
  * OFB mode of operation.
  * It generates keystream blocks, which are then XORed with the plaintext blocks to get the ciphertext.
- * ISO 10116: requires an n-bit feedback.
+ * ISO 10116: requires an n-bit feedback -> more secure.
  */
 public class OFB extends OperationMode {
 
@@ -22,7 +22,7 @@ public class OFB extends OperationMode {
 
     @Override
     protected void crypt(byte[] data, int pos) {
-        idea.crypt(feedback, 0);
-        CrytoUtils.xor(data, pos, feedback, blockSize);
+        idea.crypt(feedback);                           // Encrypt feedback
+        CrytoUtils.xor(data, pos, feedback, blockSize); // XOR data and feecback
     }
 }
