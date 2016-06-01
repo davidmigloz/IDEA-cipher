@@ -116,11 +116,8 @@ public class FileCipher {
             int chunkLen = (bytesRead + BLOCK_SIZE - 1) / BLOCK_SIZE * BLOCK_SIZE; // Closest upper multiple of blockSize
             Arrays.fill(buf.array(), bytesRead, chunkLen, (byte) 0); // Fill the free space of the chunk with 0
             for (int pos = 0; pos < chunkLen; pos += BLOCK_SIZE) {
-                if(opMod.isEncrypt()) logger.debug("e:" + Arrays.toString(Arrays.copyOfRange(buf.array(), pos,  pos + BLOCK_SIZE)));
                 opMod.crypt(buf.array(), pos); // Encrypt chunk with chosen operation mode
-                if(!opMod.isEncrypt()) logger.debug("d:" + Arrays.toString(Arrays.copyOfRange(buf.array(), pos,  pos + BLOCK_SIZE)));
             }
-            logger.debug("s----------------");
             // Write buffer to output file
             int bytesToWrite = (int) Math.min(outDataLen - filePos, chunkLen);
             buf.limit(bytesToWrite);
@@ -143,7 +140,6 @@ public class FileCipher {
         // Package the dataLength into an 8-byte block
         byte[] block = packDataLength(dataLength);
         // Encrypt block
-        logger.debug(Arrays.toString(Arrays.copyOfRange(block, 0,  0 + BLOCK_SIZE)));
         opMod.crypt(block);
         // Write block at the end of the file
         ByteBuffer buf = ByteBuffer.wrap(block);
@@ -168,7 +164,6 @@ public class FileCipher {
         byte[] block = buf.array();
         // Decrypt block
         opMod.crypt(block);
-        logger.debug(Arrays.toString(Arrays.copyOfRange(block, 0,  0 + BLOCK_SIZE)));
         // Unpackage data length
         return unpackDataLength(block);
     }
