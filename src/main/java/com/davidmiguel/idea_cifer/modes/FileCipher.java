@@ -200,13 +200,4 @@ public class FileCipher {
                 (long) (b[3] & 0xFF) << 29 |
                 (long) (b[2] & 0xFF) << 37;
     }
-
-    public static void main(String[] args) {
-        try {
-            FileCipher.cryptFile("texto.txt", "texto.cif", "asdfasdf", true, OperationMode.Mode.ECB);
-            FileCipher.cryptFile("texto.cif", "texto1.txt", "asdfasdf", false, OperationMode.Mode.ECB);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 }
