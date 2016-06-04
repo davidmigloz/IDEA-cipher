@@ -1,9 +1,9 @@
-package com.davidmiguel.idea_cifer.gui;
+package com.davidmiguel.idea_cipher.gui;
 
 import java.io.File;
 
-import com.davidmiguel.idea_cifer.modes.FileCipher;
-import com.davidmiguel.idea_cifer.modes.OperationMode;
+import com.davidmiguel.idea_cipher.modes.FileCipher;
+import com.davidmiguel.idea_cipher.modes.OperationMode;
 import javafx.application.Platform;
 import javafx.concurrent.Worker;
 import javafx.scene.control.*;

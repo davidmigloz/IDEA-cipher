@@ -1,4 +1,4 @@
-package com.davidmiguel.idea_cifer;
+package com.davidmiguel.idea_cipher;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;

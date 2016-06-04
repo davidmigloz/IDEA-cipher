@@ -1,4 +1,4 @@
-package com.davidmiguel.idea_cifer.crypto;
+package com.davidmiguel.idea_cipher.crypto;
 
 /**
  * Implementation of IDEA symmetric-key block cipher.

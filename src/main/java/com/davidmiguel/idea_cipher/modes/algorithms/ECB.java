@@ -1,7 +1,7 @@
-package com.davidmiguel.idea_cifer.modes.algorithms;
+package com.davidmiguel.idea_cipher.modes.algorithms;
 
-import com.davidmiguel.idea_cifer.crypto.IdeaCipher;
-import com.davidmiguel.idea_cifer.modes.OperationMode;
+import com.davidmiguel.idea_cipher.crypto.IdeaCipher;
+import com.davidmiguel.idea_cipher.modes.OperationMode;
 
 
 /**

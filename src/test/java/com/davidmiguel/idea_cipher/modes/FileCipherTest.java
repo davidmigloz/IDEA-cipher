@@ -1,6 +1,6 @@
-package com.davidmiguel.idea_cifer.modes;
+package com.davidmiguel.idea_cipher.modes;
 
-import com.davidmiguel.idea_cifer.MainApp;
+import com.davidmiguel.idea_cipher.MainApp;
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 

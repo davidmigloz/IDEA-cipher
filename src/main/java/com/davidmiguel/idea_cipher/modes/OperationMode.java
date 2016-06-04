@@ -1,6 +1,6 @@
-package com.davidmiguel.idea_cifer.modes;
+package com.davidmiguel.idea_cipher.modes;
 
-import com.davidmiguel.idea_cifer.crypto.IdeaCipher;
+import com.davidmiguel.idea_cipher.crypto.IdeaCipher;
 
 /**
  * Mode of operation.

@@ -1,9 +1,9 @@
-package com.davidmiguel.idea_cifer.modes;
+package com.davidmiguel.idea_cipher.modes;
 
-import com.davidmiguel.idea_cifer.modes.algorithms.CBC;
-import com.davidmiguel.idea_cifer.modes.algorithms.CFB;
-import com.davidmiguel.idea_cifer.modes.algorithms.ECB;
-import com.davidmiguel.idea_cifer.modes.algorithms.OFB;
+import com.davidmiguel.idea_cipher.modes.algorithms.CBC;
+import com.davidmiguel.idea_cipher.modes.algorithms.CFB;
+import com.davidmiguel.idea_cipher.modes.algorithms.ECB;
+import com.davidmiguel.idea_cipher.modes.algorithms.OFB;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.concurrent.Task;
