@@ -2,7 +2,7 @@
 
 Software implementation of International Data Encryption Algorithm (IDEA) cipher with 4 ciphering modes.
 
-![Screenshot](https://raw.githubusercontent.com/davidmigloz/IDEA-cipher/master/docs/report/images/screenshot.png)
+![Screenshot](https://raw.githubusercontent.com/davidmigloz/IDEA-cipher/master/docs/report/images/screenshot.gif)
 
 - Modes of operation:
     + ECB (Electronic Codebook)
