@@ -12,3 +12,4 @@ Software implementation of International Data Encryption Algorithm (IDEA) cipher
 
 ### Download
 > [IdeaCipher.v1.jar](https://github.com/davidmigloz/IDEA-cipher/releases/download/v1/IdeaCipher.v1.jar)
+> [Report.pdf](https://raw.githubusercontent.com/davidmigloz/IDEA-cipher/master/docs/report/doc.pdf)
