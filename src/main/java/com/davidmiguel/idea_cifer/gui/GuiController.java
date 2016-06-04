@@ -1,10 +1,11 @@
 package com.davidmiguel.idea_cifer.gui;
 
 import java.io.File;
-import java.io.IOException;
 
 import com.davidmiguel.idea_cifer.modes.FileCipher;
 import com.davidmiguel.idea_cifer.modes.OperationMode;
+import javafx.application.Platform;
+import javafx.concurrent.Worker;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 
@@ -12,8 +13,15 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Alert.AlertType;
 import javafx.stage.FileChooser;
 
+/**
+ * Controller for the GUI.
+ */
 public class GuiController {
 
+    @FXML
+    private Button selInput;
+    @FXML
+    private Button selOutput;
     @FXML
     private ToggleGroup operation;
     @FXML
@@ -53,15 +61,21 @@ public class GuiController {
     @FXML
     private PasswordField key;
     @FXML
+    private Button run;
+    @FXML
+    private MenuItem runMenu;
+    @FXML
     private TextArea status;
     @FXML
     private ProgressBar progressBar;
 
     private File input;
     private File output;
+    private FileCipher task;
 
     @FXML
     private void initialize() {
+        // Handlers for radio buttons
         operation.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
             handleSelectRadio(operation, operationMenu);
         });
@@ -74,30 +88,35 @@ public class GuiController {
         operationModeMenu.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
             handleSelectRadio(operationModeMenu, operationMode);
         });
-        // Set userDir as default output
-        output = new File(System.getProperty("user.home"));
-        outputFile.setText(output.toString().replace("\\", "/"));
-        inputFile.setText(output.toString().replace("\\", "/"));
+        // Set userDir as default
+        inputFile.setText(System.getProperty("user.home").replace("\\", "/"));
+        outputFile.setText(System.getProperty("user.home").replace("\\", "/"));
+        // Write help
+        status.appendText("Select files, choose parameters and press run...");
     }
 
     /**
-     * Menu file. Select input file.
+     * Select input file.
      */
     @FXML
     private void handleSelectInput() {
-        input = selectFile(true, "Select input");
-        if (input != null) {
+        File f = input != null ? selectFile(true, "Select input", input.getParent()) :
+                selectFile(true, "Select input");
+        if (f != null) {
+            input = f;
             inputFile.setText(input.toString().replace("\\", "/"));
         }
     }
 
     /**
-     * Menu file. Select output file.
+     * Select output file.
      */
     @FXML
     private void handleSelectOutput() {
-        output = selectFile(false, "Select output");
-        if (input != null) {
+        File f = input != null ? selectFile(false, "Select output", input.getParent()) :
+                selectFile(false, "Select output");
+        if (f != null) {
+            output = f;
             outputFile.setText(output.toString().replace("\\", "/"));
         }
     }
@@ -105,8 +124,15 @@ public class GuiController {
     /**
      * Run cipher.
      */
+    @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
     @FXML
     private void handleRun() {
+        // If Cancel button is pressed (while task is running)
+        if(handleCancelTask()){
+            blockUI(false);
+            return;
+        }
+        // Initial checks
         if (input == null || !input.isFile() || output == null) {
             showError("no-file");
             return;
@@ -114,7 +140,8 @@ public class GuiController {
             showError("no-key");
             return;
         }
-        System.out.println((((RadioButton) operation.getSelectedToggle()).getText()));
+        // Start process
+        blockUI(true);
         boolean encrypt = (((RadioButton) operation.getSelectedToggle()).getText()).equals("Encrypt");
         OperationMode.Mode mode = null;
         switch (((RadioButton) operationMode.getSelectedToggle()).getText()) {
@@ -131,20 +158,28 @@ public class GuiController {
                 mode = OperationMode.Mode.OFB;
                 break;
         }
-        try {
-            FileCipher.cryptFile(input.getPath(), output.getPath(),
-                    key.getText(), encrypt, mode);
-        } catch (IOException e) {
-            status.appendText("Error: " + e.getMessage() + "\n");
-            e.printStackTrace();
-        }
+        resetStatus();
+        // Create task
+        task = new FileCipher(input.getPath(), output.getPath(), key.getText(), encrypt, mode);
+        task.getStatus().addListener((observable, oldValue, newValue) -> {
+            Platform.runLater(() -> println(newValue)); // Print messages in status box
+        });
+        task.setOnSucceeded(event -> blockUI(false));
+        task.setOnFailed(event -> {
+            println("Error: " + task.getException().getMessage());
+            blockUI(false);
+        });
+        progressBar.progressProperty().bind(task.progressProperty());
+        // Run task
+        new Thread(task).start();
     }
 
     /**
-     * Menu file. Closes the application.
+     * Closes the application.
      */
     @FXML
     private void handleClose() {
+        handleCancelTask();
         System.exit(0);
     }
 
@@ -160,6 +195,73 @@ public class GuiController {
         alert.showAndWait();
     }
 
+    /**
+     * Print message in status box.
+     */
+    private void println(String msg) {
+        status.appendText("\n" + msg);
+    }
+
+    /**
+     * Clear the status box.
+     */
+    private void resetStatus() {
+        status.clear();
+        status.appendText("Let's go!");
+    }
+
+    /**
+     * Disable or enable the interface controls.
+     *
+     * @param running true: disable / false: enable
+     */
+    private void blockUI(boolean running) {
+        // Change text of Run button
+        if(running) {
+            run.setText("Cancel");
+            runMenu.setText("Cancel");
+        } else {
+            run.setText("Run");
+            runMenu.setText("Run");
+        }
+        // Disable / enable radio buttons
+        selInput.setDisable(running);
+        selOutput.setDisable(running);
+        // Disable / enable radio buttons
+        ToggleGroup[] groups = {operation, operationMenu, operationMode, operationModeMenu};
+        for(ToggleGroup g : groups){
+            for (Toggle t : g.getToggles()) {
+                if(t instanceof RadioButton){
+                    ((RadioButton) t).setDisable(running);
+                } else {
+                    ((RadioMenuItem) t).setDisable(running);
+                }
+            }
+        }
+        // Disable / enable key input
+        key.setDisable(running);
+    }
+
+    /**
+     * Cancel task.
+     *
+     * @return true if the cancel was successful
+     */
+    private boolean handleCancelTask() {
+        boolean canceled = false;
+        if(task != null && task.getState() == Worker.State.RUNNING) {
+            println("The operation was cancelled!");
+            canceled = task.cancel();
+        }
+        return canceled;
+    }
+
+    /**
+     * Sync RadioButton and RadioMenuItem.
+     *
+     * @param group group with the newest state
+     * @param groupToUpdate group to update
+     */
     private void handleSelectRadio(ToggleGroup group, ToggleGroup groupToUpdate) {
         String selected = null;
         for (Toggle t : group.getToggles()) {
@@ -176,15 +278,33 @@ public class GuiController {
         }
     }
 
-    private File selectFile(boolean open, String title) {
+    /**
+     * Open a FileChooser to select a file.
+     *
+     * @param open true: open file / false: save file
+     * @param title title of the FileChooser
+     * @param path path to open
+     * @return selected file
+     */
+    private File selectFile(boolean open, String title, String path) {
         Stage primaryStage = (Stage) inputFile.getScene().getWindow();
         FileChooser fileChooser = new FileChooser();
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("All files (*.*)", "*.*"));
-        fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+        fileChooser.setInitialDirectory(new File(path));
         fileChooser.setTitle(title);
         return open ? fileChooser.showOpenDialog(primaryStage) : fileChooser.showSaveDialog(primaryStage);
     }
 
+    /**
+     * Open a FileChooser to select a file in the default path (user.home).
+     */
+    private File selectFile(boolean open, String title) {
+        return selectFile(open, title, System.getProperty("user.home"));
+    }
+
+    /**
+     * Open an alert box to show the error.
+     */
     private void showError(String error) {
         Alert alert = new Alert(AlertType.ERROR);
         alert.setTitle("Error");

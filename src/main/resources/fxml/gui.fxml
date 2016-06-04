@@ -87,7 +87,7 @@
                         </RadioMenuItem>
                     </items>
                   </Menu>
-                  <MenuItem mnemonicParsing="false" onAction="#handleRun" text="Run">
+                  <MenuItem fx:id="runMenu" mnemonicParsing="false" onAction="#handleRun" text="Run">
                      <accelerator>
                         <KeyCodeCombination alt="UP" code="R" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                      </accelerator>
@@ -128,8 +128,8 @@
                         <Insets left="5.0" right="5.0" />
                      </GridPane.margin>
                   </TextField>
-                  <Button mnemonicParsing="false" onAction="#handleSelectInput" prefHeight="25.0" prefWidth="70.0" text="Select..." GridPane.columnIndex="2" />
-                  <Button mnemonicParsing="false" onAction="#handleSelectOutput" prefHeight="25.0" prefWidth="70.0" text="Select..." GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                  <Button fx:id="selInput" mnemonicParsing="false" onAction="#handleSelectInput" prefHeight="25.0" prefWidth="70.0" text="Select..." GridPane.columnIndex="2" />
+                  <Button fx:id="selOutput" mnemonicParsing="false" onAction="#handleSelectOutput" prefHeight="25.0" prefWidth="70.0" text="Select..." GridPane.columnIndex="2" GridPane.rowIndex="1" />
                   <GridPane>
                     <columnConstraints>
                       <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -228,7 +228,7 @@
                         <TextArea fx:id="status" editable="false" prefHeight="60.0" prefWidth="290.0" />
                      </children>
                   </VBox>
-                  <Button minHeight="60.0" minWidth="80.0" mnemonicParsing="false" onAction="#handleRun" prefHeight="60.0" prefWidth="80.0" text="Run">
+                  <Button fx:id="run" minHeight="60.0" minWidth="80.0" mnemonicParsing="false" onAction="#handleRun" prefHeight="60.0" prefWidth="80.0" text="Run">
                      <HBox.margin>
                         <Insets left="10.0" top="16.0" />
                      </HBox.margin>

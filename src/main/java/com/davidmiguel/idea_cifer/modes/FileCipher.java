@@ -4,6 +4,9 @@ import com.davidmiguel.idea_cifer.modes.algorithms.CBC;
 import com.davidmiguel.idea_cifer.modes.algorithms.CFB;
 import com.davidmiguel.idea_cifer.modes.algorithms.ECB;
 import com.davidmiguel.idea_cifer.modes.algorithms.OFB;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+import javafx.concurrent.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,39 +22,61 @@ import java.util.Arrays;
  *
  * Based on http://www.source-code.biz/idea/java
  */
-public class FileCipher {
+public class FileCipher extends Task<Void> {
 
     private static final Logger logger = LoggerFactory.getLogger(FileCipher.class);
     private static final int BLOCK_SIZE = 8;
 
-    public static void cryptFile(String inputFileName, String outputFileName, String charKey,
-                                 boolean encrypt, OperationMode.Mode mode) throws IOException {
+    private String input;
+    private String output;
+    private String key;
+    private boolean encrypt;
+    private OperationMode.Mode mode;
+    private StringProperty status; // To print messages in status box
 
+    public FileCipher(String input, String output, String key, boolean encrypt, OperationMode.Mode mode) {
+        this.input = input;
+        this.output = output;
+        this.key = key;
+        this.encrypt = encrypt;
+        this.mode = mode;
+        status = new SimpleStringProperty();
+    }
+
+    public StringProperty getStatus() {
+        return status;
+    }
+
+    /**
+     * Encrypts / decrypts file.
+     */
+    private void cryptFile() throws IOException {
         // Open input / output FileChannels
-        try (FileChannel inChannel = FileChannel.open(Paths.get(inputFileName), StandardOpenOption.READ);
-             FileChannel outChannel = FileChannel.open(Paths.get(outputFileName), StandardOpenOption.CREATE,
+        try (FileChannel inChannel = FileChannel.open(Paths.get(input), StandardOpenOption.READ);
+             FileChannel outChannel = FileChannel.open(Paths.get(output), StandardOpenOption.CREATE,
                      StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE)) {
 
             // Select mode of operation
             OperationMode opMod;
             switch (mode) {
                 case ECB:
-                    opMod = new ECB(encrypt, charKey);
+                    opMod = new ECB(encrypt, key);
                     break;
                 case CBC:
-                    opMod = new CBC(encrypt, charKey);
+                    opMod = new CBC(encrypt, key);
                     break;
                 case CFB:
-                    opMod = new CFB(encrypt, charKey);
+                    opMod = new CFB(encrypt, key);
                     break;
                 case OFB:
-                    opMod = new OFB(charKey);
+                    opMod = new OFB(key);
                     break;
                 default:
                     throw new IllegalArgumentException("Incorrect mode of operation.");
             }
             logger.debug(encrypt ? "Encrypting..." : "Decrypting...");
             logger.debug("Mode: " + mode.toString());
+            status.setValue((encrypt ? "Encrypting" : "Decrypting") + " file with " + mode.toString() + " mode.");
 
             // Check and compute sizes of data
             long inFileSize = inChannel.size(); // Input file size (bytes)
@@ -59,7 +84,8 @@ public class FileCipher {
             if (encrypt) {
                 inDataLen = inFileSize; // Input data size = input file size
                 outDataLen = (inDataLen + BLOCK_SIZE - 1) / BLOCK_SIZE * BLOCK_SIZE; // Closest upper multiple of blockSize
-                logger.debug("Sizes: " + inDataLen + "b input, " + (outDataLen + 8) + "b output");
+                logger.debug("Sizes: " + inDataLen + "b input, " + (outDataLen + BLOCK_SIZE) + "b output");
+                status.setValue("Input size: " + inDataLen / 1024 + "KB.");
             } else {
                 if (inFileSize == 0) {
                     throw new IOException("Input file is empty.");
@@ -68,42 +94,54 @@ public class FileCipher {
                 }
                 inDataLen = inFileSize - BLOCK_SIZE; // Last block is the data size (encrypted)
                 outDataLen = inDataLen;
-                logger.debug("Sizes: " + (inDataLen + 8) + "b input, <=" + outDataLen  + "b output");
+                logger.debug("Sizes: " + (inDataLen + BLOCK_SIZE) + "b input, <=" + outDataLen  + "b output");
+                status.setValue("Input size: " + (inDataLen + BLOCK_SIZE) / 1024 + "KB.");
             }
 
             // Encrypt / decrypt data
+            status.setValue("Running IDEA...");
+            long t0 = System.currentTimeMillis();
             processData(inChannel, inDataLen, outChannel, outDataLen, opMod);
+            long tf = (System.currentTimeMillis() - t0);
+            status.setValue((encrypt ? "Encryption" : "Decryption") + " finished (" + tf + "ms).");
 
             // Write / read lenght of the data
             if (encrypt) {
+                status.setValue("Attaching file size encrypted...");
                 // Add encrypted data length in an encrypted block at the end of the output file
                 writeDataLength(outChannel, inDataLen, opMod);
+                status.setValue("Output size: " + inDataLen / 1024 + "KB.");
             } else {
+                status.setValue("Checking file size...");
                 // Read encrypted data length
                 long dataSize = readDataLength(inChannel, opMod);
                 // Check if it is coherent
                 if (dataSize < 0 || dataSize > inDataLen || dataSize < inDataLen - BLOCK_SIZE + 1) {
-                    throw new IOException("Input file is not a valid cryptogram.");
+                    throw new IOException("Input file is not a valid cryptogram (wrong file size)");
                 }
                 // Truncate output file to the leght of the data
                 if (dataSize != outDataLen) {
                     outChannel.truncate(dataSize);
+                    status.setValue("Truncating output file...");
                     logger.debug("Truncate " + outDataLen + "b to " + dataSize + "b");
                 }
+                status.setValue("Output size: " + dataSize / 1024 + "KB.");
             }
-            outChannel.close();
+            status.setValue("Done!");
         }
     }
 
     /**
      * Read the input file in chunks of 2MB, encrypt/decrypt the chunks and write it in the output file.
      */
-    private static void processData(FileChannel inChannel, long inDataLen, FileChannel outChannel, long outDataLen,
+    private void processData(FileChannel inChannel, long inDataLen, FileChannel outChannel, long outDataLen,
                                     OperationMode opMod) throws IOException {
         final int bufSize = 0x200000; // 2MB of buffer
         ByteBuffer buf = ByteBuffer.allocate(bufSize);
         long filePos = 0;
         while (filePos < inDataLen) {
+            // Set progess
+            updateProgress(filePos, inDataLen);
             // Read from input file into the buffer
             int bytesToRead = (int) Math.min(inDataLen - filePos, bufSize);
             buf.limit(bytesToRead);
@@ -135,7 +173,7 @@ public class FileCipher {
      * The length is package is a 8-byte block, this block is encrypted and finally added at the end
      * of output file.
      */
-    private static void writeDataLength(FileChannel outChannel, long dataLength, OperationMode opMod)
+    private void writeDataLength(FileChannel outChannel, long dataLength, OperationMode opMod)
             throws IOException {
         // Package the dataLength into an 8-byte block
         byte[] block = packDataLength(dataLength);
@@ -154,7 +192,7 @@ public class FileCipher {
      * This data is saved encrypted in the last block of the cryptogram.
      * Read the last block of the file, decrypt block and unpackage data lenght.
      */
-    private static long readDataLength(FileChannel channel, OperationMode opMod) throws IOException {
+    private long readDataLength(FileChannel channel, OperationMode opMod) throws IOException {
         // Get last block
         ByteBuffer buf = ByteBuffer.allocate(BLOCK_SIZE);
         int bytesRead = channel.read(buf);
@@ -199,5 +237,13 @@ public class FileCipher {
                 (long) (b[4] & 0xFF) << 21 |
                 (long) (b[3] & 0xFF) << 29 |
                 (long) (b[2] & 0xFF) << 37;
+    }
+
+    @Override
+    protected Void call() throws Exception {
+        updateProgress(0, 1);
+        cryptFile();
+        updateProgress(1, 1);
+        return null;
     }
 }

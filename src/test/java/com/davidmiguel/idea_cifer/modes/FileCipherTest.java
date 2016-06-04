@@ -1,12 +1,12 @@
 package com.davidmiguel.idea_cifer.modes;
 
+import com.davidmiguel.idea_cifer.MainApp;
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -19,6 +19,7 @@ import static org.junit.Assert.*;
 
 public class FileCipherTest {
 
+    @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
     @Test
     public void cryptFile() throws Exception {
         String key           = "6FY0@7j@N'f4UQy9Bv\",+D)g@>QRRQ";
@@ -40,14 +41,27 @@ public class FileCipherTest {
         files[8] = generateFile(resourcesPath, 1024);       // 1KB
         files[9] = generateFile(resourcesPath, 1048576);    // 1MB
 
+        // Start UI
+        new Thread(() -> MainApp.main(null)).start();
+
+        // Method to test
+        Method method = FileCipher.class.getDeclaredMethod("cryptFile");
+        method.setAccessible(true);
+
         for(String file : files){
             // For each file test the 4 modes of operation
             for (OperationMode.Mode mode : OperationMode.Mode.values()) {
-                FileCipher.cryptFile(resourcesPath + file + fileExt, resourcesPath + file + cryptExt,
+                // Encrypt
+                FileCipher encryptTask = new FileCipher(resourcesPath + file + fileExt,
+                        resourcesPath + file + cryptExt,
                         key, true, mode);
-                FileCipher.cryptFile(resourcesPath + file + cryptExt, resourcesPath + file + decryptExt,
+                method.invoke(encryptTask);
+                // Decrypt
+                FileCipher decryptTask = new FileCipher(resourcesPath + file + cryptExt,
+                        resourcesPath + file + decryptExt,
                         key, false, mode);
-
+                method.invoke(decryptTask);
+                // Check
                 File file1 = new File(resourcesPath + file + fileExt);
                 File file2 = new File(resourcesPath + file + decryptExt);
                 assertTrue("Different files", FileUtils.contentEquals(file1, file2));
