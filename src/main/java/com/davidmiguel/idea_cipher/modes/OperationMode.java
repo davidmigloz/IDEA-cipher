@@ -21,7 +21,7 @@ public abstract class OperationMode {
 
     protected abstract void crypt(byte[] data, int pos);
 
-    protected void crypt(byte[] data){
+    void crypt(byte[] data){
         crypt(data, 0);
     }
 

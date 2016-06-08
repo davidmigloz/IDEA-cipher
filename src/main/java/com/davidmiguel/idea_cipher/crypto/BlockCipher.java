@@ -8,13 +8,9 @@ public abstract class BlockCipher {
     private int keySize;
     private int blockSize;
 
-    public BlockCipher(int keySize, int blockSize) {
+    BlockCipher(int keySize, int blockSize) {
         this.keySize = keySize;
         this.blockSize = blockSize;
-    }
-
-    public int getKeySize() {
-        return keySize;
     }
 
     public int getBlockSize() {
