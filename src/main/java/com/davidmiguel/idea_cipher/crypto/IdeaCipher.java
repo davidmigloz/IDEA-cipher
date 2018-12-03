@@ -166,7 +166,7 @@ public class IdeaCipher extends BlockCipher {
             if (x != 0 || y != 0) {
                 return (1 - x - y) & 0xFFFF;
             }
-            return 0;
+            return 1;
         }
     }
 
